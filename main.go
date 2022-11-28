@@ -15,20 +15,18 @@ import (
 
 func main() {
 	// htmlCode, _ := readHtmlFromFile("./raumplan_e008.txt")
-	//
-	// line := extractTableLine(htmlCode)
-	// log.Println(line)
-	//
-	// tableCells := parse(line)
-	// log.Println(len(tableCells))
-	//
-	// makePrettyOutput(tableCells)
+	htmlCode := GetHtmlFile()
+
+	line := extractTableLine(htmlCode)
+
+	tableCells := parse(line)
+	log.Println(len(tableCells))
+
+	roomInfo := transformIntoStruct(tableCells)
 
 	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pee pee pong",
-		})
+	r.GET("/apb/e008", func(c *gin.Context) {
+		c.JSON(http.StatusOK, roomInfo)
 	})
 	r.Run(os.Getenv("URL")) // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
@@ -50,18 +48,50 @@ func extractTableLine(text string) (line string) {
 	return strings.Replace(line, "812px;", "812px;'", 1)
 }
 
-func makePrettyOutput(vals []string) (htmlOutput string) {
+type RoomInfo struct {
+	Ds1 []string
+	Ds2 []string
+	Ds3 []string
+	Ds4 []string
+	Ds5 []string
+	Ds6 []string
+	Ds7 []string
+	Ds8 []string
+	Ds9 []string
+}
 
-	// tableHeaders := vals[0:7]
-	//
-	// for i, sadf := range tableHeaders {
-	// 	log.Printf("%v: %s\n", i, sadf)
-	// }
+func transformIntoStruct(vals []string) (info RoomInfo) {
 
-	// log.Println(tableHeaders)
+	ds1 := noNewLines(vals[7:12])
+	ds2 := noNewLines(vals[13:18])
+	ds3 := noNewLines(vals[19:24])
+	ds4 := noNewLines(vals[25:30])
+	ds5 := noNewLines(vals[31:36])
+	ds6 := noNewLines(vals[37:42])
+	ds7 := noNewLines(vals[43:48])
+	ds8 := noNewLines(vals[49:54])
+	ds9 := noNewLines(vals[55:60])
 
-	return "hello"
+	roomInfo := RoomInfo{
+		Ds1: ds1,
+		Ds2: ds2,
+		Ds3: ds3,
+		Ds4: ds4,
+		Ds5: ds5,
+		Ds6: ds6,
+		Ds7: ds7,
+		Ds8: ds8,
+		Ds9: ds9,
+	}
 
+	return roomInfo
+
+}
+
+func noNewLines(vals []string) (noLines []string) {
+	longString := strings.Join(vals, ";")
+	noNewLines := strings.ReplaceAll(longString, "\n", " ")
+	return strings.Split(noNewLines, ";")
 }
 
 func parse(text string) (data []string) {
