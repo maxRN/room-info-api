@@ -1,14 +1,14 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
-	// "log"
+	"log"
+
 	"net/http"
 	"regexp"
 	"strings"
 
-	// "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 	"golang.org/x/net/html"
 )
 
@@ -16,20 +16,20 @@ func main() {
 	htmlCode, _ := readHtmlFromFile("./raumplan_e008.txt")
 
 	line := extractTableLine(htmlCode)
-	// log.Println(line)
+	log.Println(line)
 
 	tableCells := parse(line)
-	fmt.Println(len(tableCells))
+	log.Println(len(tableCells))
 
 	makePrettyOutput(tableCells)
 
-	// r := gin.Default()
-	// r.GET("/ping", func(c *gin.Context) {
-	// 	c.JSON(http.StatusOK, gin.H{
-	// 		"message": "pee pee pong",
-	// 	})
-	// })
-	// r.Run("localhost:8080") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	r := gin.Default()
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "pee pee pong",
+		})
+	})
+	r.Run("localhost:8080") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
 
 func readHtmlFromFile(fileName string) (string, error) {
@@ -54,7 +54,7 @@ func makePrettyOutput(vals []string) (htmlOutput string) {
 	tableHeaders := vals[0:7]
 
 	for i, sadf := range tableHeaders {
-		fmt.Printf("%v: %s\n", i, sadf)
+		log.Printf("%v: %s\n", i, sadf)
 	}
 
 	// log.Println(tableHeaders)
@@ -117,7 +117,7 @@ func fetchTable() {
 	req, err := http.NewRequest(method, url, nil)
 
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 	req.Header.Add("sec-ch-ua", "\"Google Chrome\";v=\"107\", \"Chromium\";v=\"107\", \"Not=A?Brand\";v=\"24\"")
@@ -134,15 +134,15 @@ func fetchTable() {
 
 	res, err := client.Do(req)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
-	fmt.Println(string(body))
+	log.Println(string(body))
 }
