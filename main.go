@@ -3,6 +3,7 @@ package main
 import (
 	"io/ioutil"
 	"log"
+	"os"
 
 	"net/http"
 	"regexp"
@@ -13,15 +14,15 @@ import (
 )
 
 func main() {
-	htmlCode, _ := readHtmlFromFile("./raumplan_e008.txt")
-
-	line := extractTableLine(htmlCode)
-	log.Println(line)
-
-	tableCells := parse(line)
-	log.Println(len(tableCells))
-
-	makePrettyOutput(tableCells)
+	// htmlCode, _ := readHtmlFromFile("./raumplan_e008.txt")
+	//
+	// line := extractTableLine(htmlCode)
+	// log.Println(line)
+	//
+	// tableCells := parse(line)
+	// log.Println(len(tableCells))
+	//
+	// makePrettyOutput(tableCells)
 
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
@@ -29,7 +30,7 @@ func main() {
 			"message": "pee pee pong",
 		})
 	})
-	r.Run("localhost:8080") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	r.Run(os.Getenv("URL")) // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
 
 func readHtmlFromFile(fileName string) (string, error) {
@@ -51,11 +52,11 @@ func extractTableLine(text string) (line string) {
 
 func makePrettyOutput(vals []string) (htmlOutput string) {
 
-	tableHeaders := vals[0:7]
-
-	for i, sadf := range tableHeaders {
-		log.Printf("%v: %s\n", i, sadf)
-	}
+	// tableHeaders := vals[0:7]
+	//
+	// for i, sadf := range tableHeaders {
+	// 	log.Printf("%v: %s\n", i, sadf)
+	// }
 
 	// log.Println(tableHeaders)
 
