@@ -92,8 +92,8 @@ type LoginRequest struct {
 }
 
 func login(loginCredentials *LoginCredentials) {
-	username, _ := os.ReadFile("username.txt")
-	password, _ := os.ReadFile("password.txt")
+	username := os.Getenv("TU_USERNAME")
+	password := os.Getenv("TU_PASSWORD")
 
 	url := "https://navigator.tu-dresden.de/api/login"
 	method := "POST"
