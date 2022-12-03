@@ -36,9 +36,11 @@ type Room struct {
 
 func main() {
 	// Load in the `.env` file
-	err := godotenv.Load()
+	_ = godotenv.Load(".env.local")
+	_ = godotenv.Load(".env.dev")
+	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatal("failed to load env", err)
+		log.Println(err)
 	}
 
 	// Open a connection to the database
@@ -53,6 +55,21 @@ func main() {
 	r.GET("/rooms/:building", GetAllRoomsForBuilding)
 	r.GET("/rooms/:building/:room", GetRoomInfo)
 	r.Run(os.Getenv("URL")) // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+}
+
+func splitLectures(room Room) (roomInfoResponse RoomInfoResponse) {
+	roomInfoResponse.Ds1 = strings.Split(room.Ds1, "|")
+	roomInfoResponse.Ds2 = strings.Split(room.Ds2, "|")
+	roomInfoResponse.Ds3 = strings.Split(room.Ds3, "|")
+	roomInfoResponse.Ds4 = strings.Split(room.Ds4, "|")
+	roomInfoResponse.Ds5 = strings.Split(room.Ds5, "|")
+	roomInfoResponse.Ds6 = strings.Split(room.Ds6, "|")
+	roomInfoResponse.Ds7 = strings.Split(room.Ds7, "|")
+	roomInfoResponse.Ds8 = strings.Split(room.Ds8, "|")
+	roomInfoResponse.Ds9 = strings.Split(room.Ds9, "|")
+	roomInfoResponse.Ds10 = strings.Split(room.Ds10, "|")
+
+	return roomInfoResponse
 }
 
 func GetAllRoomsForBuilding(c *gin.Context) {
@@ -85,7 +102,17 @@ func GetAllRoomsForBuilding(c *gin.Context) {
 		rooms = append(rooms, room)
 	}
 
-	c.JSON(http.StatusOK, rooms)
+	var roomInfos []RoomInfoResponse
+	for _, room := range rooms {
+		roomInfo := splitLectures(room)
+		roomInfo.Name = room.Name
+		roomInfo.Building = room.Building
+		roomInfo.RoomId = room.RoomId
+		roomInfo.Id = room.Id
+		roomInfos = append(roomInfos, roomInfo)
+	}
+
+	c.JSON(http.StatusOK, roomInfos)
 
 }
 
