@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -92,8 +93,8 @@ type LoginRequest struct {
 }
 
 func login(loginCredentials *LoginCredentials) {
-	username := os.Getenv("TU_USERNAME")
-	password := os.Getenv("TU_PASSWORD")
+	username := base64.StdEncoding.EncodeToString([]byte(os.Getenv("TU_USERNAME")))
+	password := base64.StdEncoding.EncodeToString([]byte(os.Getenv("TU_PASSWORD")))
 
 	url := "https://navigator.tu-dresden.de/api/login"
 	method := "POST"
