@@ -234,7 +234,14 @@ func putRoomIntoDb(room Room, c *gin.Context) {
 }
 
 func FetchNewRoomInfoAndPersistToDB(c *gin.Context) {
-	newRoom := Room{}
+	API_KEY := os.Getenv("API_KEY")
+	authHeader := c.GetHeader("Authentication")
+
+	if API_KEY != authHeader {
+		log.Println("api keys dont match!")
+		c.AbortWithStatus(401)
+		return
+	}
 
 	for _, room := range GetRoomsWithWebPage() {
 		rawData := parse(room.WebPage)
@@ -254,13 +261,12 @@ func FetchNewRoomInfoAndPersistToDB(c *gin.Context) {
 			Ds9:      strings.Join(info.Ds9, "|"),
 			Ds10:     strings.Join(info.Ds10, "|"),
 		}
-		newRoom = room
 
 		putRoomIntoDb(room, c)
 
 	}
 
-	c.JSON(http.StatusOK, newRoom)
+	c.Status(http.StatusNoContent)
 }
 
 func GetAllBuildings(c *gin.Context) {
