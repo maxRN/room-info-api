@@ -1,6 +1,5 @@
 name: fetch-new-lecture-plan
-env:
-  TOKEN: ${{secrets.API_KEY}}
+
 on:
   workflow_dispatch:
   schedule:
@@ -10,5 +9,8 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - name: Start Fetching of Latest Lecture Plan
+          shell: bash
+          env:
+            TOKEN: ${{secrets.API_KEY}}
           run: |
-            curl -H 'Authentication: ${{TOKEN}}' https://better-room-fino-deq3n.ondigitalocean.app/updateRooms
+            curl -H 'Authentication: $TOKEN' https://better-room-fino-deq3n.ondigitalocean.app/updateRooms
