@@ -13,4 +13,4 @@ jobs:
           env:
             TOKEN: ${{secrets.API_KEY}}
           run: |
-            curl -H 'Authentication: "$TOKEN"' https://better-room-fino-deq3n.ondigitalocean.app/updateRooms
+            curl -H "Authentication: ${TOKEN}" https://better-room-fino-deq3n.ondigitalocean.app/updateRooms
