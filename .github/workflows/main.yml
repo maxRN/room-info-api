@@ -12,5 +12,7 @@ jobs:
           shell: bash
           env:
             TOKEN: ${{secrets.API_KEY}}
+            NOT_SECRET: ${{secrets.THIS_CAN_SHOW}}
           run: |
-            curl -H 'Authentication: $TOKEN' https://better-room-fino-deq3n.ondigitalocean.app/updateRooms
+            echo '$NOT_SECRET'
+# curl -H 'Authentication: $TOKEN' https://better-room-fino-deq3n.ondigitalocean.app/updateRooms
