@@ -1,7 +1,6 @@
 name: fetch-new-lecture-plan
 on:
   workflow_dispatch:
-    inputs: ""
   schedule:
     - cron: "0 4 * * 1"
 jobs:
