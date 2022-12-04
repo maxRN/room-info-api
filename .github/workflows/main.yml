@@ -1,0 +1,10 @@
+name: fetch-new-lecture-plan
+on:
+  schedule:
+    - cron: "0 4 * * 1"
+jobs:
+  fetch-new-plan:
+      runs-on: ubuntu
+      steps:
+        - name: Start Fetching of Latest Lecture Plan
+          run: curl https://better-room-fino-deq3n.ondigitalocean.app/rooms/APB
