@@ -43,11 +43,17 @@ func main() {
 	}
 
 	r := gin.Default()
+	r.GET("/info", getAllBuildings)
 	r.GET("/freeRoom", findFreeRoom)
 	r.GET("/updateRooms", updateRooms)
 	r.GET("/rooms/:building", getAllRoomsForBuilding)
 	r.GET("/rooms/:building/:room", getRoomInfo)
 	r.Run(os.Getenv("URL")) // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+}
+
+func getAllBuildings(c *gin.Context) {
+	buildings := []string{"APB"}
+	c.JSON(http.StatusOK, buildings)
 }
 
 func updateRooms(c *gin.Context) {
