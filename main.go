@@ -6,7 +6,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
@@ -74,8 +76,39 @@ func updateRooms(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
+func getRoomsForBuildings(buildings []string) (rs []Room) {
+	for _, b := range buildings {
+		dbRooms := queryRoomsBuilding(b, db)
+		for _, dbRoom := range dbRooms {
+			rs = append(rs, dbRoomIntoRoom(dbRoom))
+		}
+	}
+	return
+}
+
 func findFreeRoom(c *gin.Context) {
-	FindFreeRoom(c, db)
+	log.Println("testing")
+	// check params and do error handling
+	// TODO: check if building exists
+	building := c.Query("building")
+	periodParam := c.Query("period")
+	period, err := strconv.Atoi(periodParam)
+	if err != nil {
+		// TODO: check if period is valid
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Expected a number for the period"})
+	}
+	log.Println(building, period)
+
+	rooms := getRoomsForBuildings([]string{building})
+
+	freeRooms := FindFreeRooms(rooms, time.Now().Weekday(), period)
+
+	if len(freeRooms) == 0 {
+		c.Status(http.StatusNoContent)
+		return
+	}
+
+	c.JSON(http.StatusOK, freeRooms)
 }
 
 func getRoomInfo(c *gin.Context) {
