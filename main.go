@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -79,6 +80,7 @@ func updateRooms(c *gin.Context) {
 }
 
 func getRoomsForBuildings(buildings []string) (rs []Room) {
+	// TODO if buildings empty then return all rooms
 	for _, b := range buildings {
 		dbRooms := queryRoomsBuilding(b, db)
 		for _, dbRoom := range dbRooms {
@@ -91,18 +93,26 @@ func getRoomsForBuildings(buildings []string) (rs []Room) {
 func findFreeRoom(c *gin.Context) {
 	// check params and do error handling
 	// TODO: check if building exists
-	building := c.Query("building")
-	periodParam := c.Query("period")
-	period, err := strconv.Atoi(periodParam)
-	if err != nil {
-		// TODO: check if period is valid
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Expected a number for the period"})
+	buildings := strings.Split(c.Query("building"), ",")
+	perQuery := strings.Split(c.Query("period"), ",")
+
+	periods := []int{}
+	for _, p := range perQuery {
+		period, err := strconv.Atoi(p)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Expected a number for the period"})
+			return
+		}
+		if period < 1 || period > 10 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Periods have to be between 1 and 10!")})
+			return
+		}
+		periods = append(periods, period)
 	}
-	log.Println(building, period)
 
-	rooms := getRoomsForBuildings([]string{building})
+	rooms := getRoomsForBuildings(buildings)
 
-	freeRooms := FindFreeRooms(rooms, time.Now().Weekday(), period)
+	freeRooms := FindFreeRooms(rooms, time.Now().Weekday(), periods)
 
 	if len(freeRooms) == 0 {
 		c.Status(http.StatusNoContent)

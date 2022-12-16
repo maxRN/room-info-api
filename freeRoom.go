@@ -46,17 +46,19 @@ func getScheduleForDs(room Room, ds int) []string {
 	panic("can't happen")
 }
 
-func FindFreeRooms(rooms []Room, d time.Weekday, ds int) []Room {
+func FindFreeRooms(rooms []Room, d time.Weekday, periods []int) []Room {
 	if d == 0 || d == 6 {
 		return rooms
 	}
 
 	freeRooms := []Room{}
 	for _, room := range rooms {
-		currSched := getScheduleForDs(room, ds)
-		lec := currSched[d-1]
-		if lec == "" {
-			freeRooms = append(freeRooms, room)
+		for _, p := range periods {
+			currSched := getScheduleForDs(room, p)
+			lec := currSched[d-1]
+			if lec == "" {
+				freeRooms = append(freeRooms, room)
+			}
 		}
 	}
 
