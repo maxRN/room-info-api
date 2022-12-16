@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
@@ -45,6 +46,7 @@ func main() {
 	}
 
 	r := gin.Default()
+	r.Use(cors.Default())
 	r.GET("/info", getAllBuildings)
 	r.GET("/freeRoom", findFreeRoom)
 	r.GET("/updateRooms", updateRooms)
@@ -87,7 +89,6 @@ func getRoomsForBuildings(buildings []string) (rs []Room) {
 }
 
 func findFreeRoom(c *gin.Context) {
-	log.Println("testing")
 	// check params and do error handling
 	// TODO: check if building exists
 	building := c.Query("building")

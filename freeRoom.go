@@ -47,7 +47,6 @@ func getScheduleForDs(room Room, ds int) []string {
 }
 
 func FindFreeRooms(rooms []Room, d time.Weekday, ds int) []Room {
-	log.Println(d)
 	if d == 0 || d == 6 {
 		return rooms
 	}
@@ -55,9 +54,7 @@ func FindFreeRooms(rooms []Room, d time.Weekday, ds int) []Room {
 	freeRooms := []Room{}
 	for _, room := range rooms {
 		currSched := getScheduleForDs(room, ds)
-		log.Println(currSched)
 		lec := currSched[d-1]
-		log.Println(lec)
 		if lec == "" {
 			freeRooms = append(freeRooms, room)
 		}
